@@ -1,0 +1,53 @@
+/* 
+.ui-wrapper {}
+.ui-wrapper .player-health {}
+.ui-wrapper .enemy-health {}
+.ui-wrapper .timer {} 
+*/
+* {
+    box-sizing: border-box;
+}
+body {
+    padding: 0;
+    margin: 0;
+    background-color: rgba(26, 26, 26, 0.795)
+}
+canvas {
+    display: block;
+    margin: auto;
+}
+.ui-wrapper {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    width: 1024px;
+    margin: auto;
+    left: 0;
+    right: 0;
+    padding: 20px;
+}
+.ui-wrapper .health {
+    background-color: blue;
+    width: 100%;
+    height: 30px;
+    display: flex;
+}
+.ui-wrapper .health:first-of-type {
+    justify-content: flex-start;
+}
+.ui-wrapper .health:last-of-type {
+    justify-content: flex-end;
+}
+.ui-wrapper .health #playerHealth,
+.ui-wrapper .health #enemyHealth {
+    background-color: yellow;
+    width: 100%;
+    height: 100%;
+    transition: all .5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.ui-wrapper .timer {
+    width: 100px;
+    height: 100px;
+    background-color: red;
+    flex-shrink: 0;
+}
