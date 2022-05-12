@@ -68,7 +68,7 @@ class Sprite {
   }
 
   update() {
-    this.draw() 
+     this.draw() 
         
     this.position.x += this.velocity.x
     this.position.y += this.velocity.y
@@ -88,6 +88,18 @@ class Sprite {
       this.isAttacking = false
     }, 100);
   }
+}
+
+function retangularCollision({ retangle1, retangle2 }) {
+  return (
+    retangle1.attackBox.position.x + retangle1.attackBox.width >= retangle2.position.x 
+    && 
+    retangle1.attackBox.position.x <= retangle2.position.x + retangle2.width
+    &&
+    retangle1.attackBox.position.y + retangle1.attackBox.height >= retangle2.position.y
+    &&
+    retangle1.attackBox.position.x <= retangle2.position.y + retangle2.height
+  )
 }
 
 const player = new Sprite({
@@ -138,18 +150,23 @@ function animate() {
 
   //collision
   if (
-    player.attackBox.position.x + player.attackBox.width >= enemy.position.x 
-    && 
-    player.attackBox.position.x <= enemy.position.x + enemy.width
-    &&
-    player.attackBox.position.y + player.attackBox.height >= enemy.position.y
-    &&
-    player.attackBox.position.x <= enemy.position.y + enemy.height
-    &&
-    player.isAttacking
+    retangularCollision({
+      retangle1: player,
+      retangle2: enemy
+    }) && player.isAttacking
   ) {
     player.isAttacking = false
-    console.log('mata');
+    console.log('player attack successful');
+  }
+
+  if (
+    retangularCollision({
+      retangle1: enemy,
+      retangle2: player
+    }) && enemy.isAttacking
+  ) {
+    enemy.isAttacking = false
+    console.log('enemy attack successful');
   }
 }
 
@@ -184,6 +201,9 @@ window.addEventListener('keydown', (event) => {
       if (enemy.jump) {
         enemy.velocity.y = -10
       }
+    break
+    case 'ArrowDown':
+      enemy.attack()
     break
   }
 })
