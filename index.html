@@ -8,16 +8,19 @@
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <div class="ui-wrapper">
-        <div class="health">
-            <div id="playerHealth"></div>
+    <main>
+        <div class="display-message" id="displayMessage"></div>
+        <div class="ui-wrapper">
+            <div class="health">
+                <div id="playerHealth"></div>
+            </div>
+            <div class="timer" id="timer">99</div>
+            <div class="health">
+                <div id="enemyHealth"></div>
+            </div>
         </div>
-        <div class="timer"></div>
-        <div class="health">
-            <div id="enemyHealth"></div>
-        </div>
-    </div>
-    <canvas></canvas>
+        <canvas></canvas>
+    </main>    
     <script src="index.js"></script>
 </body>
 </html>

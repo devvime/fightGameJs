@@ -4,17 +4,30 @@
 .ui-wrapper .enemy-health {}
 .ui-wrapper .timer {} 
 */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 * {
     box-sizing: border-box;
+    font-family: 'Press Start 2P', cursive;
 }
 body {
     padding: 0;
     margin: 0;
-    background-color: rgba(26, 26, 26, 0.795)
+    background-color: rgba(26, 26, 26, 0.795);
+    display: flex;
 }
-canvas {
+main {
     display: block;
     margin: auto;
+}
+.display-message {
+    width: 1024px;
+    height: 576px;
+    color: white;
+    font-size: 1em;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .ui-wrapper {
     position: absolute;
@@ -50,4 +63,9 @@ canvas {
     height: 100px;
     background-color: red;
     flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 2em;
 }
