@@ -1,7 +1,6 @@
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
 const gravity = 0.4
-
 const keys = {
   w: {
     pressed: false
@@ -29,6 +28,11 @@ const keys = {
   }
 }
 
+let timer = 60
+let timerId
+let gameOver = false
+let paused = false
+
 canvas.width = 1024
 canvas.height = 576
 
@@ -50,6 +54,7 @@ class Sprite {
     }
     this.isAttacking = false
     this.health = 100
+    this.revert = false
   }
 
   draw() {
@@ -60,7 +65,7 @@ class Sprite {
     if (this.isAttacking) {
       c.fillStyle = 'green'
       c.fillRect(
-        this.attackBox.position.x, 
+        this.revert ? this.attackBox.position.x - this.width: this.attackBox.position.x, 
         this.attackBox.position.y, 
         this.attackBox.width, 
         this.attackBox.height
@@ -91,16 +96,51 @@ class Sprite {
   }
 }
 
-function retangularCollision({ retangle1, retangle2 }) {
-  return (
-    retangle1.attackBox.position.x + retangle1.attackBox.width >= retangle2.position.x 
-    && 
-    retangle1.attackBox.position.x <= retangle2.position.x + retangle2.width
-    &&
-    retangle1.attackBox.position.y + retangle1.attackBox.height >= retangle2.position.y
-    &&
-    retangle1.attackBox.position.x <= retangle2.position.y + retangle2.height
-  )
+const player = new Sprite({
+  position: {
+    x: 0,
+    y: 0
+  },
+  velocity: {
+    x: 0,
+    y: 0
+  },
+  color: 'blue'
+})
+const enemy = new Sprite({
+  position: {
+    x: 400,
+    y: 100
+  },
+  velocity: {
+    x: 0,
+    y: 0
+  },
+  color: 'red'
+})
+
+function setCollision({ retangle1, retangle2 }) {
+  if (!retangle1.revert) {
+    return (
+      retangle1.attackBox.position.x + retangle1.attackBox.width >= retangle2.position.x 
+      && 
+      retangle1.attackBox.position.x <= retangle2.position.x + retangle2.width
+      &&
+      retangle1.attackBox.position.y + retangle1.attackBox.height >= retangle2.position.y
+      &&
+      retangle1.attackBox.position.x <= retangle2.position.y + retangle2.height
+    )
+  } else {
+    return (
+      retangle1.attackBox.position.x - retangle1.attackBox.width <= retangle2.position.x 
+      && 
+      retangle1.attackBox.position.x >= retangle2.position.x - retangle2.width
+      &&
+      retangle1.attackBox.position.y - retangle1.attackBox.height <= retangle2.position.y
+      &&
+      retangle1.attackBox.position.x >= retangle2.position.y - retangle2.height
+    )
+  }
 }
 
 function setWinner({ player, enemy, timerId }) {
@@ -116,15 +156,10 @@ function setWinner({ player, enemy, timerId }) {
   }
 }
 
-let timer = 60
-let timerId
-let gameOver = false
-let paused = false
-
-function decreaseTimer() {  
+function setTimer() {  
   if (!paused) {
     if (timer > 0) {
-      timerId = setTimeout(decreaseTimer, 1000)
+      timerId = setTimeout(setTimer, 1000)
       timer--
       document.querySelector('#timer').innerHTML = timer
     }
@@ -133,32 +168,6 @@ function decreaseTimer() {
     }
   }
 }
-
-decreaseTimer()
-
-const player = new Sprite({
-  position: {
-    x: 0,
-    y: 0
-  },
-  velocity: {
-    x: 0,
-    y: 0
-  },
-  color: 'blue'
-})
-
-const enemy = new Sprite({
-  position: {
-    x: 400,
-    y: 100
-  },
-  velocity: {
-    x: 0,
-    y: 0
-  },
-  color: 'red'
-})
 
 function animate() {
   if (!paused) {
@@ -184,7 +193,7 @@ function animate() {
 
     //collision
     if (
-      retangularCollision({
+      setCollision({
         retangle1: player,
         retangle2: enemy
       }) && player.isAttacking
@@ -195,7 +204,7 @@ function animate() {
     }
 
     if (
-      retangularCollision({
+      setCollision({
         retangle1: enemy,
         retangle2: player
       }) && enemy.isAttacking
@@ -212,6 +221,7 @@ function animate() {
   }
 }
 
+setTimer()
 animate()
 
 window.addEventListener('keydown', (event) => {
@@ -219,9 +229,11 @@ window.addEventListener('keydown', (event) => {
     switch (event.key) {
       case 'd':
         keys.d.pressed = true
+        player.revert = false
       break
       case 'a':
         keys.a.pressed = true
+        player.revert = true
       break
       case 'w':
         if (player.jump) {
@@ -234,9 +246,11 @@ window.addEventListener('keydown', (event) => {
   
       case 'ArrowRight':
         keys.ArrowRight.pressed = true
+        enemy.revert = false
       break
       case 'ArrowLeft':
         keys.ArrowLeft.pressed = true
+        enemy.revert = true
       break
       case 'ArrowUp':
         if (enemy.jump) {
@@ -250,7 +264,7 @@ window.addEventListener('keydown', (event) => {
         if (paused) {
           paused = false
           animate()
-          decreaseTimer()
+          setTimer()
         }else {
           paused = true
         }
